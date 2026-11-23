@@ -1,0 +1,30 @@
+package ua.edu.nupp.kpp.server.web;
+
+import java.io.IOException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.*;
+import ua.edu.nupp.kpp.server.model.Specialist;
+import ua.edu.nupp.kpp.server.service.SpecialistService;
+
+@WebServlet("/specialists")
+public final class SpecialistServlet extends JsonServlet {
+    private final SpecialistService service=new SpecialistService();
+    
+    @Override protected void doGet(HttpServletRequest req,HttpServletResponse resp) throws IOException {
+        handle(resp,200,()->req.getParameter("id")==null ? service.all() : service.get(id(req)));
+    }
+
+    
+    @Override protected void doPost(HttpServletRequest req,HttpServletResponse resp) throws IOException {
+        handle(resp,201,()->service.create(body(req,Specialist.class)));
+    }
+
+    
+    @Override protected void doPut(HttpServletRequest req,HttpServletResponse resp) throws IOException {
+        handle(resp,200,()->service.update(id(req),body(req,Specialist.class)));
+    }
+    @Override protected void doDelete(HttpServletRequest req,HttpServletResponse resp) throws IOException {
+        handle(resp,200,()->{service.delete(id(req));return java.util.Map.of("ok",true);});
+    }
+
+}
